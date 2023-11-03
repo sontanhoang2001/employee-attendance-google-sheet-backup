@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tạo QR code</title>
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+
+    <!-- <style>
+        body {
+            font-family: Verdana, Geneva, Tahoma, sans-serif;
+            font-size: medium;
+        }
+
+        /* Đặt màu cho nút thoát */
+        .btn--exit {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #f44336;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        input[type="text"] {
+            padding: 8px 20px;
+            margin: 8px 0;
+            box-sizing: border-box;
+            border: 2px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        /* select {
+            padding: 8px 20px;
+            margin: 8px 0;
+            box-sizing: border-box;
+            border: 2px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        } */
+    </style> -->
+</head>
+
+<body>
+    <!-- <h1>Tạo QR code cho nhân viên điểm danh</h1>
+    <form action="/chamcong/qr" method="post">
+        <label for="code">Mã tiệc:</label>
+
+        <input type="text" name="code" id="code" value="<%= code%>" placeholder="Nhập mã tiệc..." />
+        <button type="submit">Tạo</button>
+    </form>
+    <br>
+    <% if (qr) { %>
+        <img width="350px" src="<%= qr %>" />
+        <br>
+        <a href="<%= qr %>" download="qr-code.png"><button type="button">Tải QR Code</button></a>
+        <% } %>
+
+            <a class="btn--exit" href="/chamcong">Thoát</a> -->
+
+
+    <div class="mt-4 container">
+        <h3>Tạo QR code cho nhân viên điểm danh</h3>
+        <form action="/chamcong/qr" method="post" class="form-inline">
+            <div class="form-group mb-2 mr-2">
+                <label for="code" class="sr-only">Mã tiệc:</label>
+                <input type="text" class="form-control" name="code" id="code" value="<%= code%>"
+                    placeholder="Nhập mã tiệc..." />
+            </div>
+            <button type="submit" class="btn btn-primary mb-2 mr-2">Tạo mã</button>
+
+            <a class="btn btn-danger mb-2" href="/chamcong">Thoát</a>
+        </form>
+        <% if (qr) { %>
+            <div class="row m-2">
+                <div class=" border border-success">
+                    <img width="350px" src="<%= qr %>" />
+                </div>
+                <div class="col-md-12 mt-2">
+                    <a href="<%= qr %>" download="qr-code.png" class="btn btn-success">Tải QR Code</a>
+                </div>
+            </div>
+            <% } %>
+    </div>
+</body>
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+</html>

@@ -1,0 +1,264 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng nhập và điểm danh</title>
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #17a2b8;
+            height: 100vh;
+        }
+
+        #login .container #login-row #login-column #login-box {
+            margin-top: 120px;
+            max-width: 600px;
+            border: 1px solid #9C9C9C;
+            background-color: #EAEAEA;
+        }
+
+        #login .container #login-row #login-column #login-box #login-form {
+            padding: 20px;
+        }
+
+        #login .container #login-row #login-column #login-box #login-form #register-link {
+            margin-top: -85px;
+        }
+
+        .checkbox-xl .form-check-input {
+            top: 1.2rem;
+            scale: 1.7;
+            margin-right: 0.8rem;
+        }
+
+        .checkbox-lg .form-check-input {
+            top: .8rem;
+            scale: 1.4;
+            margin-right: 0.7rem;
+        }
+
+        .checkbox-lg .form-check-label {
+            padding-top: 13px;
+        }
+
+
+        /*the container must be positioned relative:*/
+        .autocomplete {
+            position: relative;
+            display: inline-block;
+        }
+
+        .autocomplete-items {
+            position: absolute;
+            border: 1px solid #d4d4d4;
+            border-bottom: none;
+            border-top: none;
+            z-index: 99;
+            top: 52%;
+            left: 35px;
+            right: 0;
+            width: fit-content;
+        }
+
+        .autocomplete-items div {
+            padding: 10px;
+            cursor: pointer;
+            background-color: #fff;
+            border-bottom: 1px solid #d4d4d4;
+        }
+
+        /*when hovering an item:*/
+        .autocomplete-items div:hover {
+            background-color: #17a2b8;
+        }
+
+        /*when navigating through the items using the arrow keys:*/
+        .autocomplete-active {
+            background-color: DodgerBlue !important;
+            color: #ffffff;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="login">
+        <div class="container">
+            <div id="login-row" class="row justify-content-center align-items-center">
+                <div id="login-column" class="col-md-6">
+                    <div id="login-box" class="col-md-12">
+                        <form id="login-form" action="/chamcong/?code=<%=  code %>" method="POST">
+                            <h3 class="text-center text-info">Điểm danh nhân viên</h3>
+                            <div class="form-group">
+                                <label for="phone" class="text-info">Số điện thoại:</label><br>
+                                <input type="text" id="phone" name="phone" class="form-control"
+                                    value="<%= dataInputed.phone %>">
+                            </div>
+                            <div class="form-group">
+                                <label for="fullName" class="text-info">Họ và tên:</label><br>
+                                <input type="text" id="fullName" name="fullName" class="form-control"
+                                    value="<%= dataInputed.fullName %>">
+                                <p class="mt-2 text-primary">*(Không cần nhập "Họ và tên" nếu bạn đã có tài khoản)</p>
+                            </div>
+                            <div class="form-group form-check checkbox-lg">
+                                <input class="form-check-input" type="checkbox" value="1" id="doForOther"
+                                    name="doForOther" disabled />
+                                <label class="form-check-label" for="doForOther">Điểm danh hộ</label>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-btn col-xs-12 col-sm-6 mt-3">
+                                        <button type="submit" class="btn btn-block btn-info" name="checkin" id="checkin"
+                                            value="checkin">Điểm Danh (check-in)</button>
+                                    </div>
+                                    <div class="col-btn col-xs-12 col-sm-6 mt-3">
+                                        <button type="submit" class="btn btn-block btn-danger" name="checkout"
+                                            id="checkout" value="checkout">Rời đi (check-out)</button>
+                                    </div>
+                                </div>
+
+                                <% if(loginStatus) { %>
+                                    <div class="mt-3 alert alert-danger" role="alert">
+                                        <%= loginStatus %>
+                                    </div>
+                                    <% } %>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+</body>
+
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+<script>
+    const fullNameInput = document.getElementById('fullName');
+    const doForOtherCheckbox = document.getElementById('doForOther');
+
+    fullNameInput.addEventListener('input', () => {
+        if (fullNameInput.value) {
+            doForOtherCheckbox.removeAttribute('disabled');
+        } else {
+            doForOtherCheckbox.setAttribute('disabled', true);
+            doForOtherCheckbox.checked = false;
+        }
+    });
+
+    function autocomplete(inp, arr) {
+        /*the autocomplete function takes two arguments,
+        the text field element and an array of possible autocompleted values:*/
+        var currentFocus;
+        /*execute a function when someone writes in the text field:*/
+        inp.addEventListener("input", function (e) {
+            var a, b, i, val = this.value;
+            /*close any already open lists of autocompleted values*/
+            closeAllLists();
+            if (!val) { return false; }
+            currentFocus = -1;
+            /*create a DIV element that will contain the items (values):*/
+            a = document.createElement("DIV");
+            a.setAttribute("id", this.id + "autocomplete-list");
+            a.setAttribute("class", "autocomplete-items");
+            /*append the DIV element as a child of the autocomplete container:*/
+            this.parentNode.appendChild(a);
+            /*for each item in the array...*/
+            for (i = 0; i < arr.length; i++) {
+                /*check if the item starts with the same letters as the text field value:*/
+                if (arr[i].substr(0, val.length).toUpperCase() == val.toUpperCase()) {
+                    /*create a DIV element for each matching element:*/
+                    b = document.createElement("DIV");
+                    /*make the matching letters bold:*/
+                    b.innerHTML = "<strong>" + arr[i].substr(0, val.length) + "</strong>";
+                    b.innerHTML += arr[i].substr(val.length);
+                    /*insert a input field that will hold the current array item's value:*/
+                    b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
+                    /*execute a function when someone clicks on the item value (DIV element):*/
+                    b.addEventListener("click", function (e) {
+                        /*insert the value for the autocomplete text field:*/
+                        inp.value = this.getElementsByTagName("input")[0].value;
+                        /*close the list of autocompleted values,
+                        (or any other open lists of autocompleted values:*/
+                        closeAllLists();
+                    });
+                    a.appendChild(b);
+                }
+            }
+        });
+        /*execute a function presses a key on the keyboard:*/
+        inp.addEventListener("keydown", function (e) {
+            var x = document.getElementById(this.id + "autocomplete-list");
+            if (x) x = x.getElementsByTagName("div");
+            if (e.keyCode == 40) {
+                /*If the arrow DOWN key is pressed,
+                increase the currentFocus variable:*/
+                currentFocus++;
+                /*and and make the current item more visible:*/
+                addActive(x);
+            } else if (e.keyCode == 38) { //up
+                /*If the arrow UP key is pressed,
+                decrease the currentFocus variable:*/
+                currentFocus--;
+                /*and and make the current item more visible:*/
+                addActive(x);
+            } else if (e.keyCode == 13) {
+                /*If the ENTER key is pressed, prevent the form from being submitted,*/
+                e.preventDefault();
+                if (currentFocus > -1) {
+                    /*and simulate a click on the "active" item:*/
+                    if (x) x[currentFocus].click();
+                }
+            }
+        });
+        function addActive(x) {
+            /*a function to classify an item as "active":*/
+            if (!x) return false;
+            /*start by removing the "active" class on all items:*/
+            removeActive(x);
+            if (currentFocus >= x.length) currentFocus = 0;
+            if (currentFocus < 0) currentFocus = (x.length - 1);
+            /*add class "autocomplete-active":*/
+            x[currentFocus].classList.add("autocomplete-active");
+        }
+        function removeActive(x) {
+            /*a function to remove the "active" class from all autocomplete items:*/
+            for (var i = 0; i < x.length; i++) {
+                x[i].classList.remove("autocomplete-active");
+            }
+        }
+        function closeAllLists(elmnt) {
+            /*close all autocomplete lists in the document,
+            except the one passed as an argument:*/
+            var x = document.getElementsByClassName("autocomplete-items");
+            for (var i = 0; i < x.length; i++) {
+                if (elmnt != x[i] && elmnt != inp) {
+                    x[i].parentNode.removeChild(x[i]);
+                }
+            }
+        }
+        /*execute a function when someone clicks in the document:*/
+        document.addEventListener("click", function (e) {
+            closeAllLists(e.target);
+        });
+    }
+
+    /*An array containing all the employee fullName:*/
+    fetch(`https://cuoihoidangkhoa.com.vn/chamcong/getlistusers`)
+        .then(response => response.json())
+        .then(data => {
+            // console.log("listUser: ", data.listUser)
+            const listUser = data.listUser;
+            /*initiate the autocomplete function on the "myInput" element, and pass along the countries array as possible autocomplete values:*/
+            autocomplete(document.getElementById("fullName"), listUser);
+        })
+        .catch(error => console.error(error));
+</script>
+
+</html>
