@@ -361,7 +361,7 @@ let getQRpage = async (req, res) => {
 
 let createQR = async (req, res) => {
     const code = req.body.code;
-    const currentUrl = "https://cuoihoidangkhoa.com.vn/chamcong/?code=" + code;
+    const currentUrl = "/chamcong/?code=" + code;
     const maxLength = 30;
 
     let lines = [];
