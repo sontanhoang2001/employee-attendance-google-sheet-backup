@@ -9,6 +9,7 @@ const removeDiacritics = require('remove-diacritics');
 const { createCanvas, loadImage } = require('canvas');
 
 
+console.log("check env: ", process.env.PRIVATE_KEY)
 const PRIVATE_KEY = process.env.PRIVATE_KEY;
 const CLIENT_EMAIL = process.env.CLIENT_EMAIL;
 const SHEET_ID = process.env.SHEET_ID;
